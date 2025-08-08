@@ -37,7 +37,7 @@ jobs:
             cd /home/ubuntu
 
             # ECR'ye giriş yapın
-            sudo docker login --username AWS --password-stdin ${{ env.ECR_PASSWORD }} 889597770516.dkr.ecr.us-east-1.amazonaws.com
+            echo "${{ env.ECR_PASSWORD }}" | sudo docker login --username AWS --password-stdin 889597770516.dkr.ecr.us-east-1.amazonaws.com
 
             # Docker imajlarını ECR'den çek
             sudo docker-compose pull
