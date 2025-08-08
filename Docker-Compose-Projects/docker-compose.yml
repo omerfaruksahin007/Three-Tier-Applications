@@ -1,7 +1,7 @@
 version: '3'
 services:
-  frontend: 
-    container_name: frontend
+  frontend:
+    image: 889597770516.dkr.ecr.us-east-1.amazonaws.com/three-tier-frontend:latest
     build: 
       context: frontend/
     image: fronted-image
@@ -12,7 +12,7 @@ services:
     networks:
       - three-tier-net 
   backend:
-    container_name: backend
+    image: 889597770516.dkr.ecr.us-east-1.amazonaws.com/three-tier-backend:latest
     build: 
       context: backend/
     image: backend-image
