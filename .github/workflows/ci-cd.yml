@@ -23,33 +23,25 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Transfer Docker Compose File and Deploy
+      - name: Deploy to EC2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # SSH oturumunda AWS kimlik bilgilerini ayarlayın
-            export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-            export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            export AWS_REGION=${{ secrets.AWS_REGION }}
-
-            # Docker Compose dosyasını GitHub deposundan kopyala
-            # İlk olarak eski dosyayı sil, sonra yenisini çek
-            rm -f /home/ubuntu/docker-compose.yml
+            # Docker Compose dosyasını GitHub'dan çek
             curl -o /home/ubuntu/docker-compose.yml https://raw.githubusercontent.com/${{ github.repository }}/main/Docker-Compose-Projects/docker-compose.yml
 
             # Docker Compose dosyasının bulunduğu dizine gidin
             cd /home/ubuntu
 
             # ECR'ye giriş yapın
-            sudo aws ecr get-login-password --region $AWS_REGION | sudo docker login --username AWS --password-stdin 889597770516.dkr.ecr.us-east-1.amazonaws.com
+            sudo ECR_PASSWORD=$(aws ecr get-login-password --region ${{ secrets.AWS_REGION }})
+            sudo docker login --username AWS --password-stdin $ECR_PASSWORD 889597770516.dkr.ecr.us-east-1.amazonaws.com
 
             # Docker imajlarını ECR'den çek
-            sudo docker pull 889597770516.dkr.ecr.us-east-1.amazonaws.com/three-tier-frontend:latest
-            sudo docker pull 889597770516.dkr.ecr.us-east-1.amazonaws.com/three-tier-backend:latest
-            sudo docker pull mysql:8.0
+            sudo docker-compose pull
 
             # Eski konteynerleri durdur ve kaldır
             sudo docker-compose down
