@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     image: 889597770516.dkr.ecr.us-east-1.amazonaws.com/three-tier-backend:latest
