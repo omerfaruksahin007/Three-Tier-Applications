@@ -38,6 +38,5 @@ services:
 volumes:
   mysql-data:
 networks:
-  three-tier-net:
-    name: three-tier-net
+  three-tier-network:
     driver: bridge
