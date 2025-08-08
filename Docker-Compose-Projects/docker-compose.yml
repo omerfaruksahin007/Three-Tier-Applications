@@ -12,8 +12,6 @@ services:
       - DB_NAME=testdb
     depends_on:
       - db
-    networks:
-      - three-tier-network
 
   frontend:
     image: 889597770516.dkr.ecr.us-east-1.amazonaws.com/three-tier-frontend:latest
@@ -23,8 +21,6 @@ services:
       - REACT_APP_BACKEND_URL=http://<EC2_SUNUCU_IP_ADRESI>:3000
     depends_on:
       - backend
-    networks:
-      - three-tier-network
 
   db:
     image: mysql:8.0
@@ -33,9 +29,3 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=your_mysql_root_password
       - MYSQL_DATABASE=testdb
-    networks:
-      - three-tier-network
-
-networks:
-  three-tier-network:
-    driver: bridge
