@@ -1,42 +1,41 @@
-version: '3'
+version: '3.8'
+
 services:
-  frontend:
-    image: 889597770516.dkr.ecr.us-east-1.amazonaws.com/three-tier-frontend:latest
-    build: 
-      context: frontend/
-    image: fronted-image
-    ports: 
-      - "80:80"
-    depends_on:
-      - backend
-    networks:
-      - three-tier-net 
   backend:
     image: 889597770516.dkr.ecr.us-east-1.amazonaws.com/three-tier-backend:latest
-    build: 
-      context: backend/
-    image: backend-image
-    ports: 
-      - "3500:3500"
+    ports:
+      - "3000:3000"
     environment:
-      - MYSQL_HOST=db
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=mysql123
-      - MYSQL_DATABASE=school
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=your_mysql_root_password
+      - DB_NAME=testdb
     depends_on:
       - db
     networks:
-      - three-tier-net
-  db:
-    container_name: mysql-container
-    image: mysql:latest
+      - three-tier-network
+
+  frontend:
+    image: 889597770516.dkr.ecr.us-east-1.amazonaws.com/three-tier-frontend:latest
+    ports:
+      - "80:80"
     environment:
-      - MYSQL_ROOT_PASSWORD=mysql123
-      - MYSQL_DATABASE=school
-    volumes:
-      - mysql-data:/var/lib/mysql
-volumes:
-  mysql-data:
+      - REACT_APP_BACKEND_URL=http://<EC2_SUNUCU_IP_ADRESI>:3000
+    depends_on:
+      - backend
+    networks:
+      - three-tier-network
+
+  db:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=your_mysql_root_password
+      - MYSQL_DATABASE=testdb
+    networks:
+      - three-tier-network
+
 networks:
   three-tier-network:
     driver: bridge
